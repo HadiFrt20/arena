@@ -1,0 +1,101 @@
+[
+  {
+    "id": "rest-crud",
+    "title": "REST API with In-Memory CRUD",
+    "category": "web",
+    "difficulty": "medium",
+    "prompt": "Write a class InMemoryCRUD that manages items with id, name, and created_at fields. Implement create(name) -> item, get(id) -> item or None, list_all() -> list, update(id, name) -> item or None, delete(id) -> bool. IDs should auto-increment.",
+    "language": "python",
+    "tests": [
+      { "name": "create item", "setup": "api = InMemoryCRUD()", "run": "item = api.create('test'); result = item['name']", "assert": "result == 'test'" },
+      { "name": "auto increment id", "setup": "api = InMemoryCRUD()", "run": "a = api.create('a'); b = api.create('b'); result = b['id']", "assert": "result == 2" },
+      { "name": "get item", "setup": "api = InMemoryCRUD()", "run": "api.create('test'); result = api.get(1)['name']", "assert": "result == 'test'" },
+      { "name": "list all", "setup": "api = InMemoryCRUD()", "run": "api.create('a'); api.create('b'); result = len(api.list_all())", "assert": "result == 2" },
+      { "name": "update item", "setup": "api = InMemoryCRUD()", "run": "api.create('old'); result = api.update(1, 'new')['name']", "assert": "result == 'new'" },
+      { "name": "delete item", "setup": "api = InMemoryCRUD()", "run": "api.create('test'); result = api.delete(1)", "assert": "result == True" },
+      { "name": "get deleted returns None", "setup": "api = InMemoryCRUD()", "run": "api.create('test'); api.delete(1); result = api.get(1)", "assert": "result is None" }
+    ],
+    "qualitative_checks": [
+      { "id": "datetime", "description": "Uses datetime for created_at", "patterns": ["datetime", "time\\.time"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "url-shortener",
+    "title": "URL Shortener",
+    "category": "web",
+    "difficulty": "medium",
+    "prompt": "Implement a URLShortener class with shorten(url) -> short_code (6 chars), resolve(short_code) -> original_url or None, and stats(short_code) -> dict with click count. Each resolve call increments clicks.",
+    "language": "python",
+    "tests": [
+      { "name": "shorten and resolve", "setup": "s = URLShortener()", "run": "code = s.shorten('https://example.com'); result = s.resolve(code)", "assert": "result == 'https://example.com'" },
+      { "name": "short code length", "setup": "s = URLShortener()", "run": "code = s.shorten('https://example.com'); result = len(code)", "assert": "result == 6" },
+      { "name": "resolve missing", "setup": "s = URLShortener()", "run": "result = s.resolve('abc123')", "assert": "result is None" },
+      { "name": "click tracking", "setup": "s = URLShortener()", "run": "code = s.shorten('https://example.com'); s.resolve(code); s.resolve(code); result = s.stats(code)['clicks']", "assert": "result == 2" },
+      { "name": "same url same code", "setup": "s = URLShortener()", "run": "c1 = s.shorten('https://example.com'); c2 = s.shorten('https://example.com'); result = c1 == c2", "assert": "result == True" }
+    ],
+    "qualitative_checks": [
+      { "id": "hashing", "description": "Uses hashing for short codes", "patterns": ["hashlib|hash\\(|md5|sha"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "csv-parser",
+    "title": "CSV Parser with Quoted Fields",
+    "category": "cli",
+    "difficulty": "medium",
+    "prompt": "Write a function parse_csv(text) that parses CSV text into a list of lists. Handle quoted fields (fields wrapped in double quotes), escaped quotes within quoted fields (two double quotes = one), commas within quoted fields, and newlines within quoted fields.",
+    "language": "python",
+    "tests": [
+      { "name": "simple row", "setup": "", "run": "result = parse_csv('a,b,c')", "assert": "result == [['a', 'b', 'c']]" },
+      { "name": "multiple rows", "setup": "", "run": "result = parse_csv('a,b\\nc,d')", "assert": "result == [['a', 'b'], ['c', 'd']]" },
+      { "name": "quoted field", "setup": "", "run": "result = parse_csv('\"hello world\",b')", "assert": "result == [['hello world', 'b']]" },
+      { "name": "comma in quotes", "setup": "", "run": "result = parse_csv('\"a,b\",c')", "assert": "result == [['a,b', 'c']]" },
+      { "name": "escaped quotes", "setup": "", "run": "result = parse_csv('\"he said \"\"hi\"\"\",b')", "assert": "result == [['he said \"hi\"', 'b']]" },
+      { "name": "empty fields", "setup": "", "run": "result = parse_csv('a,,c')", "assert": "result == [['a', '', 'c']]" }
+    ],
+    "qualitative_checks": [
+      { "id": "state-machine", "description": "Uses state machine or character-by-character parsing", "patterns": ["state|STATE|in_quotes|quoted"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "json-flatten",
+    "title": "Flatten Nested JSON",
+    "category": "cli",
+    "difficulty": "easy",
+    "prompt": "Write a function flatten_json(obj, separator='.') that flattens a nested dict into a single-level dict with dot-notation keys. Arrays should use numeric indices. Example: {'a': {'b': 1}} -> {'a.b': 1}.",
+    "language": "python",
+    "tests": [
+      { "name": "simple nested", "setup": "", "run": "result = flatten_json({'a': {'b': 1}})", "assert": "result == {'a.b': 1}" },
+      { "name": "deep nested", "setup": "", "run": "result = flatten_json({'a': {'b': {'c': 1}}})", "assert": "result == {'a.b.c': 1}" },
+      { "name": "with list", "setup": "", "run": "result = flatten_json({'a': [1, 2]})", "assert": "result == {'a.0': 1, 'a.1': 2}" },
+      { "name": "flat input", "setup": "", "run": "result = flatten_json({'a': 1, 'b': 2})", "assert": "result == {'a': 1, 'b': 2}" },
+      { "name": "empty dict", "setup": "", "run": "result = flatten_json({})", "assert": "result == {}" },
+      { "name": "mixed types", "setup": "", "run": "result = flatten_json({'a': {'b': 'hello', 'c': True}})", "assert": "result == {'a.b': 'hello', 'a.c': True}" }
+    ],
+    "qualitative_checks": [
+      { "id": "recursive", "description": "Uses recursion", "patterns": ["def flatten|flatten_json.*flatten"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "markdown-toc",
+    "title": "Markdown Table of Contents",
+    "category": "cli",
+    "difficulty": "easy",
+    "prompt": "Write a function generate_toc(markdown_text) that parses markdown headings (# through ######) and returns a markdown-formatted table of contents with proper indentation (2 spaces per level) and links. Example: '## Hello' -> '  - [Hello](#hello)'.",
+    "language": "python",
+    "tests": [
+      { "name": "single heading", "setup": "", "run": "result = generate_toc('# Hello')", "assert": "result == '- [Hello](#hello)'" },
+      { "name": "nested headings", "setup": "", "run": "result = generate_toc('# A\\n## B')", "assert": "result == '- [A](#a)\\n  - [B](#b)'" },
+      { "name": "special chars in anchor", "setup": "", "run": "result = generate_toc('# Hello World!')", "assert": "'#hello-world' in result" },
+      { "name": "skips non-headings", "setup": "", "run": "result = generate_toc('hello\\n# Title\\nparagraph')", "assert": "result == '- [Title](#title)'" },
+      { "name": "multiple same level", "setup": "", "run": "lines = generate_toc('## A\\n## B').split('\\n'); result = len(lines)", "assert": "result == 2" }
+    ],
+    "qualitative_checks": [
+      { "id": "regex", "description": "Uses regex for heading parsing", "patterns": ["re\\.", "import re"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  }
+]

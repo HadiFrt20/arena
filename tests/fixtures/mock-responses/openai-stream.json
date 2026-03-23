@@ -1,0 +1,8 @@
+[
+  "data: {\"id\":\"chatcmpl-01\",\"object\":\"chat.completion.chunk\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"finish_reason\":null}]}\n\n",
+  "data: {\"id\":\"chatcmpl-01\",\"object\":\"chat.completion.chunk\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"def add\"},\"finish_reason\":null}]}\n\n",
+  "data: {\"id\":\"chatcmpl-01\",\"object\":\"chat.completion.chunk\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"(a, b):\"},\"finish_reason\":null}]}\n\n",
+  "data: {\"id\":\"chatcmpl-01\",\"object\":\"chat.completion.chunk\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\\n    return a + b\"},\"finish_reason\":null}]}\n\n",
+  "data: {\"id\":\"chatcmpl-01\",\"object\":\"chat.completion.chunk\",\"choices\":[{\"index\":0,\"delta\":{},\"finish_reason\":\"stop\"}]}\n\n",
+  "data: [DONE]\n\n"
+]

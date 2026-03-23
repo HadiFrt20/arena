@@ -1,0 +1,96 @@
+[
+  {
+    "id": "log-analyzer",
+    "title": "Log File Analyzer",
+    "category": "cli",
+    "difficulty": "medium",
+    "prompt": "Write a function analyze_logs(log_text) that takes a multiline string of log entries in format 'TIMESTAMP LEVEL MESSAGE' (e.g., '2024-01-01 ERROR Database timeout'). Return a dict with: 'total' (count), 'by_level' (dict of level -> count), 'top_errors' (list of top 3 most frequent ERROR messages).",
+    "language": "python",
+    "tests": [
+      { "name": "total count", "setup": "logs = '2024-01-01 INFO Start\\n2024-01-02 ERROR Fail\\n2024-01-03 INFO End'", "run": "result = analyze_logs(logs)['total']", "assert": "result == 3" },
+      { "name": "by level", "setup": "logs = '2024-01-01 INFO Start\\n2024-01-02 ERROR Fail\\n2024-01-03 INFO End'", "run": "result = analyze_logs(logs)['by_level']", "assert": "result == {'INFO': 2, 'ERROR': 1}" },
+      { "name": "top errors", "setup": "logs = '2024-01-01 ERROR A\\n2024-01-02 ERROR A\\n2024-01-03 ERROR B'", "run": "result = analyze_logs(logs)['top_errors']", "assert": "result[0] == 'A'" },
+      { "name": "empty input", "setup": "", "run": "result = analyze_logs('')['total']", "assert": "result == 0" }
+    ],
+    "qualitative_checks": [
+      { "id": "counter", "description": "Uses Counter for frequency", "patterns": ["Counter", "collections"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "file-dedup",
+    "title": "Find Duplicate Files by Hash",
+    "category": "cli",
+    "difficulty": "medium",
+    "prompt": "Write a function find_duplicates(file_dict) that takes a dict of {filepath: content_string} and returns a list of lists, where each inner list contains filepaths that have identical content. Only include groups with 2+ files. Sort groups by first filepath.",
+    "language": "python",
+    "tests": [
+      { "name": "finds duplicates", "setup": "files = {'a.txt': 'hello', 'b.txt': 'hello', 'c.txt': 'world'}", "run": "result = find_duplicates(files)", "assert": "result == [['a.txt', 'b.txt']]" },
+      { "name": "no duplicates", "setup": "files = {'a.txt': 'hello', 'b.txt': 'world'}", "run": "result = find_duplicates(files)", "assert": "result == []" },
+      { "name": "multiple groups", "setup": "files = {'a': '1', 'b': '1', 'c': '2', 'd': '2'}", "run": "result = find_duplicates(files)", "assert": "len(result) == 2" },
+      { "name": "empty input", "setup": "", "run": "result = find_duplicates({})", "assert": "result == []" }
+    ],
+    "qualitative_checks": [
+      { "id": "hashing", "description": "Uses hashing for comparison", "patterns": ["hashlib", "hash\\(", "md5", "sha"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "auth-jwt",
+    "title": "JWT Authentication",
+    "category": "web",
+    "difficulty": "hard",
+    "prompt": "Implement a JWTAuth class with encode(payload, secret) -> token_string and decode(token, secret) -> payload_dict. Use HMAC-SHA256 for signing. The token format is base64url(header).base64url(payload).base64url(signature). Include exp (expiration) checking in decode - raise an exception if expired. Do NOT use any JWT library.",
+    "language": "python",
+    "tests": [
+      { "name": "encode and decode", "setup": "auth = JWTAuth()", "run": "token = auth.encode({'user': 'alice'}, 'secret'); result = auth.decode(token, 'secret')['user']", "assert": "result == 'alice'" },
+      { "name": "invalid signature", "setup": "auth = JWTAuth()", "run": "token = auth.encode({'user': 'alice'}, 'secret')\ntry:\n    auth.decode(token, 'wrong')\n    result = False\nexcept Exception:\n    result = True", "assert": "result == True" },
+      { "name": "expired token", "setup": "import time; auth = JWTAuth()", "run": "token = auth.encode({'user': 'alice', 'exp': int(time.time()) - 10}, 'secret')\ntry:\n    auth.decode(token, 'secret')\n    result = False\nexcept Exception:\n    result = True", "assert": "result == True" },
+      { "name": "token has three parts", "setup": "auth = JWTAuth()", "run": "token = auth.encode({'a': 1}, 'secret'); result = len(token.split('.'))", "assert": "result == 3" }
+    ],
+    "qualitative_checks": [
+      { "id": "hmac", "description": "Uses HMAC for signing", "patterns": ["hmac", "HMAC"] },
+      { "id": "base64url", "description": "Uses base64url encoding", "patterns": ["base64", "urlsafe"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "webhook-handler",
+    "title": "Webhook Signature Verification",
+    "category": "web",
+    "difficulty": "medium",
+    "prompt": "Implement a WebhookHandler class with sign(payload_string, secret) -> hex_signature and verify(payload_string, signature, secret) -> bool. Use HMAC-SHA256. Also implement register(event_type, callback), and dispatch(event_type, payload) that calls all registered callbacks for that event type.",
+    "language": "python",
+    "tests": [
+      { "name": "sign and verify", "setup": "wh = WebhookHandler()", "run": "sig = wh.sign('hello', 'secret'); result = wh.verify('hello', sig, 'secret')", "assert": "result == True" },
+      { "name": "reject bad signature", "setup": "wh = WebhookHandler()", "run": "result = wh.verify('hello', 'bad', 'secret')", "assert": "result == False" },
+      { "name": "dispatch calls handlers", "setup": "wh = WebhookHandler(); results = []", "run": "wh.register('push', lambda p: results.append(p)); wh.dispatch('push', 'data'); result = results", "assert": "result == ['data']" },
+      { "name": "dispatch unknown event", "setup": "wh = WebhookHandler()", "run": "result = wh.dispatch('unknown', 'data')", "assert": "True" }
+    ],
+    "qualitative_checks": [
+      { "id": "hmac", "description": "Uses HMAC for signing", "patterns": ["hmac", "HMAC"] },
+      { "id": "constant-time", "description": "Uses constant-time comparison", "patterns": ["compare_digest|constant_time"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "sse-counter",
+    "title": "Server-Sent Events Counter",
+    "category": "web",
+    "difficulty": "easy",
+    "prompt": "Implement an SSEFormatter class with format_event(data, event=None, id=None) -> string that formats data as a Server-Sent Events message. Also implement a Counter class with increment(), decrement(), get_value(), and to_sse_event() that returns the current count formatted as an SSE event.",
+    "language": "python",
+    "tests": [
+      { "name": "format basic event", "setup": "f = SSEFormatter()", "run": "result = f.format_event('hello')", "assert": "'data: hello' in result" },
+      { "name": "format named event", "setup": "f = SSEFormatter()", "run": "result = f.format_event('hello', event='message')", "assert": "'event: message' in result" },
+      { "name": "format with id", "setup": "f = SSEFormatter()", "run": "result = f.format_event('hello', id='1')", "assert": "'id: 1' in result" },
+      { "name": "counter increment", "setup": "c = Counter()", "run": "c.increment(); c.increment(); result = c.get_value()", "assert": "result == 2" },
+      { "name": "counter decrement", "setup": "c = Counter()", "run": "c.increment(); c.decrement(); result = c.get_value()", "assert": "result == 0" },
+      { "name": "counter to sse", "setup": "c = Counter()", "run": "c.increment(); result = c.to_sse_event()", "assert": "'data:' in result" }
+    ],
+    "qualitative_checks": [
+      { "id": "newline-terminated", "description": "SSE events end with double newline", "patterns": ["\\\\n\\\\n|\\n\\n"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  }
+]

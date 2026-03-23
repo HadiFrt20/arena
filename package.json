@@ -1,0 +1,49 @@
+{
+  "name": "arena-cli",
+  "version": "1.0.0",
+  "description": "AI coding battles in your terminal. Two models race to solve the same challenge.",
+  "type": "module",
+  "bin": {
+    "arena": "./bin/arena.js"
+  },
+  "scripts": {
+    "start": "node bin/arena.js",
+    "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --reporters=./tests/reporter.js",
+    "test:unit": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --testPathPattern=unit --reporters=./tests/reporter.js",
+    "test:integration": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --testPathPattern=integration --reporters=./tests/reporter.js",
+    "test:uat": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --testPathPattern=uat --reporters=./tests/reporter.js",
+    "test:verbose": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --verbose",
+    "test:coverage": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --coverage --verbose"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testTimeout": 30000,
+    "transform": {},
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 85,
+        "lines": 85,
+        "statements": 85
+      }
+    }
+  },
+  "dependencies": {
+    "ink": "^4.0.0",
+    "ink-spinner": "^5.0.0",
+    "react": "^18.0.0",
+    "commander": "^11.0.0",
+    "chalk": "^5.0.0",
+    "conf": "^12.0.0",
+    "nanoid": "^5.0.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.0.0",
+    "eslint": "^8.0.0",
+    "ink-testing-library": "^3.0.0",
+    "jest": "^29.0.0"
+  }
+}

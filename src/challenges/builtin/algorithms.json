@@ -1,0 +1,100 @@
+[
+  {
+    "id": "fizzbuzz",
+    "title": "FizzBuzz",
+    "category": "algorithms",
+    "difficulty": "easy",
+    "prompt": "Write a function fizzbuzz(n) that returns a list of strings from 1 to n. For multiples of 3 use 'Fizz', multiples of 5 use 'Buzz', multiples of both use 'FizzBuzz', otherwise use the number as a string.",
+    "language": "python",
+    "tests": [
+      { "name": "fizzbuzz(1)", "setup": "", "run": "result = fizzbuzz(1)", "assert": "result == ['1']" },
+      { "name": "fizzbuzz(3)", "setup": "", "run": "result = fizzbuzz(3)", "assert": "result == ['1', '2', 'Fizz']" },
+      { "name": "fizzbuzz(5)", "setup": "", "run": "result = fizzbuzz(5)", "assert": "result == ['1', '2', 'Fizz', '4', 'Buzz']" },
+      { "name": "fizzbuzz(15) last element", "setup": "", "run": "result = fizzbuzz(15)", "assert": "result[-1] == 'FizzBuzz'" },
+      { "name": "fizzbuzz(15) length", "setup": "", "run": "result = fizzbuzz(15)", "assert": "len(result) == 15" }
+    ],
+    "qualitative_checks": [
+      { "id": "list-comprehension", "description": "Uses list comprehension", "patterns": ["\\[.*for.*in.*\\]"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "binary-search",
+    "title": "Binary Search with Edge Cases",
+    "category": "algorithms",
+    "difficulty": "easy",
+    "prompt": "Write a function binary_search(arr, target) that returns the index of target in a sorted array, or -1 if not found. Handle empty arrays and single-element arrays.",
+    "language": "python",
+    "tests": [
+      { "name": "found in middle", "setup": "", "run": "result = binary_search([1,2,3,4,5], 3)", "assert": "result == 2" },
+      { "name": "found at start", "setup": "", "run": "result = binary_search([1,2,3], 1)", "assert": "result == 0" },
+      { "name": "found at end", "setup": "", "run": "result = binary_search([1,2,3], 3)", "assert": "result == 2" },
+      { "name": "not found", "setup": "", "run": "result = binary_search([1,2,3], 4)", "assert": "result == -1" },
+      { "name": "empty array", "setup": "", "run": "result = binary_search([], 1)", "assert": "result == -1" },
+      { "name": "single element found", "setup": "", "run": "result = binary_search([5], 5)", "assert": "result == 0" }
+    ],
+    "qualitative_checks": [
+      { "id": "iterative", "description": "Uses iterative approach", "patterns": ["while"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "lru-cache",
+    "title": "LRU Cache with O(1) Operations",
+    "category": "algorithms",
+    "difficulty": "medium",
+    "prompt": "Implement an LRUCache class with capacity, get(key), and put(key, value) methods. get returns -1 if key not found. Both operations should be O(1). When capacity is exceeded, evict the least recently used key.",
+    "language": "python",
+    "tests": [
+      { "name": "basic put and get", "setup": "cache = LRUCache(2)", "run": "cache.put(1, 1); result = cache.get(1)", "assert": "result == 1" },
+      { "name": "get missing key", "setup": "cache = LRUCache(2)", "run": "result = cache.get(99)", "assert": "result == -1" },
+      { "name": "eviction", "setup": "cache = LRUCache(2)", "run": "cache.put(1, 1); cache.put(2, 2); cache.put(3, 3); result = cache.get(1)", "assert": "result == -1" },
+      { "name": "access refreshes", "setup": "cache = LRUCache(2)", "run": "cache.put(1, 1); cache.put(2, 2); cache.get(1); cache.put(3, 3); result = cache.get(2)", "assert": "result == -1" },
+      { "name": "overwrite key", "setup": "cache = LRUCache(2)", "run": "cache.put(1, 1); cache.put(1, 10); result = cache.get(1)", "assert": "result == 10" }
+    ],
+    "qualitative_checks": [
+      { "id": "doubly-linked", "description": "Uses doubly linked list or OrderedDict", "patterns": ["OrderedDict", "prev.*next|next.*prev"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] },
+      { "id": "docstrings", "description": "Includes docstrings", "patterns": ["\"\"\"", "'''"] }
+    ]
+  },
+  {
+    "id": "merge-intervals",
+    "title": "Merge Overlapping Intervals",
+    "category": "algorithms",
+    "difficulty": "medium",
+    "prompt": "Write a function merge_intervals(intervals) that takes a list of [start, end] intervals and returns a list of merged non-overlapping intervals, sorted by start time.",
+    "language": "python",
+    "tests": [
+      { "name": "overlapping", "setup": "", "run": "result = merge_intervals([[1,3],[2,6],[8,10],[15,18]])", "assert": "result == [[1,6],[8,10],[15,18]]" },
+      { "name": "adjacent", "setup": "", "run": "result = merge_intervals([[1,4],[4,5]])", "assert": "result == [[1,5]]" },
+      { "name": "no overlap", "setup": "", "run": "result = merge_intervals([[1,2],[3,4]])", "assert": "result == [[1,2],[3,4]]" },
+      { "name": "single interval", "setup": "", "run": "result = merge_intervals([[1,4]])", "assert": "result == [[1,4]]" },
+      { "name": "empty input", "setup": "", "run": "result = merge_intervals([])", "assert": "result == []" },
+      { "name": "unsorted input", "setup": "", "run": "result = merge_intervals([[3,4],[1,2],[2,3]])", "assert": "result == [[1,4]]" }
+    ],
+    "qualitative_checks": [
+      { "id": "sorting", "description": "Sorts intervals first", "patterns": ["sort", "sorted"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "rate-limiter",
+    "title": "Token Bucket Rate Limiter",
+    "category": "algorithms",
+    "difficulty": "hard",
+    "prompt": "Implement a TokenBucketRateLimiter class with __init__(self, capacity, refill_rate) where refill_rate is tokens per second. Implement allow(self) that returns True if a request is allowed (consuming one token) or False if the bucket is empty. Tokens refill over time based on elapsed time since last check.",
+    "language": "python",
+    "tests": [
+      { "name": "allows up to capacity", "setup": "rl = TokenBucketRateLimiter(3, 1)", "run": "results = [rl.allow() for _ in range(3)]; result = all(results)", "assert": "result == True" },
+      { "name": "blocks after capacity", "setup": "rl = TokenBucketRateLimiter(2, 1)", "run": "rl.allow(); rl.allow(); result = rl.allow()", "assert": "result == False" },
+      { "name": "refills over time", "setup": "import time; rl = TokenBucketRateLimiter(1, 10)", "run": "rl.allow(); time.sleep(0.2); result = rl.allow()", "assert": "result == True" },
+      { "name": "zero capacity", "setup": "rl = TokenBucketRateLimiter(0, 1)", "run": "result = rl.allow()", "assert": "result == False" }
+    ],
+    "qualitative_checks": [
+      { "id": "time-based", "description": "Uses time module for refill", "patterns": ["time\\.time|time\\.monotonic"] },
+      { "id": "thread-safe", "description": "Uses threading locks", "patterns": ["Lock\\(\\)", "threading"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  }
+]

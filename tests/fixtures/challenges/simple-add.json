@@ -1,0 +1,14 @@
+{
+  "id": "simple-add",
+  "title": "Add Two Numbers",
+  "category": "algorithms",
+  "difficulty": "easy",
+  "prompt": "Write a function called add(a, b) that returns the sum of two numbers.",
+  "language": "python",
+  "tests": [
+    { "name": "basic addition", "setup": "", "run": "result = add(2, 3)", "assert": "result == 5" },
+    { "name": "negative numbers", "setup": "", "run": "result = add(-1, -1)", "assert": "result == -2" },
+    { "name": "zero", "setup": "", "run": "result = add(0, 0)", "assert": "result == 0" }
+  ],
+  "qualitative_checks": []
+}

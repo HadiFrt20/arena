@@ -1,0 +1,12 @@
+{
+  "id": "timeout-test",
+  "title": "Slow Function",
+  "category": "algorithms",
+  "difficulty": "easy",
+  "prompt": "Write a function called slow() that returns 42 after waiting 1 second.",
+  "language": "python",
+  "tests": [
+    { "name": "returns 42", "setup": "", "run": "result = slow()", "assert": "result == 42" }
+  ],
+  "qualitative_checks": []
+}

@@ -1,0 +1,96 @@
+[
+  {
+    "id": "kv-store-ttl",
+    "title": "Key-Value Store with TTL",
+    "category": "data-structures",
+    "difficulty": "medium",
+    "prompt": "Build a key-value store class TTLStore that supports set(key, value, ttl=None), get(key), and delete(key). Keys with a TTL (in seconds) should expire and return None after the TTL elapses. Include a cleanup() method to remove expired keys.",
+    "language": "python",
+    "tests": [
+      { "name": "set and get basic", "setup": "store = TTLStore()", "run": "store.set('a', 1); result = store.get('a')", "assert": "result == 1" },
+      { "name": "get expired key", "setup": "import time; store = TTLStore()", "run": "store.set('a', 1, ttl=1); time.sleep(1.5); result = store.get('a')", "assert": "result is None" },
+      { "name": "delete existing", "setup": "store = TTLStore()", "run": "store.set('a', 1); store.delete('a'); result = store.get('a')", "assert": "result is None" },
+      { "name": "overwrite key", "setup": "store = TTLStore()", "run": "store.set('a', 1); store.set('a', 2); result = store.get('a')", "assert": "result == 2" },
+      { "name": "get missing key", "setup": "store = TTLStore()", "run": "result = store.get('nonexistent')", "assert": "result is None" }
+    ],
+    "qualitative_checks": [
+      { "id": "thread-safe", "description": "Uses threading locks or async-safe patterns", "patterns": ["Lock\\(\\)", "threading", "asyncio.Lock"] },
+      { "id": "type-hints", "description": "Includes Python type hints", "patterns": ["def .+\\(.*:.*\\).*->"] },
+      { "id": "docstrings", "description": "Includes docstrings", "patterns": ["\"\"\"", "'''"] }
+    ]
+  },
+  {
+    "id": "linked-list",
+    "title": "Doubly Linked List with Iterator",
+    "category": "data-structures",
+    "difficulty": "medium",
+    "prompt": "Implement a DoublyLinkedList class with append(value), prepend(value), delete(value), find(value) -> bool, and __iter__ for iteration. Each node has prev and next pointers.",
+    "language": "python",
+    "tests": [
+      { "name": "append and iterate", "setup": "ll = DoublyLinkedList()", "run": "ll.append(1); ll.append(2); ll.append(3); result = list(ll)", "assert": "result == [1, 2, 3]" },
+      { "name": "prepend", "setup": "ll = DoublyLinkedList()", "run": "ll.append(2); ll.prepend(1); result = list(ll)", "assert": "result == [1, 2]" },
+      { "name": "delete middle", "setup": "ll = DoublyLinkedList()", "run": "ll.append(1); ll.append(2); ll.append(3); ll.delete(2); result = list(ll)", "assert": "result == [1, 3]" },
+      { "name": "find existing", "setup": "ll = DoublyLinkedList()", "run": "ll.append(1); ll.append(2); result = ll.find(2)", "assert": "result == True" },
+      { "name": "find missing", "setup": "ll = DoublyLinkedList()", "run": "ll.append(1); result = ll.find(99)", "assert": "result == False" }
+    ],
+    "qualitative_checks": [
+      { "id": "node-class", "description": "Uses a Node class", "patterns": ["class Node"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "priority-queue",
+    "title": "Min-Heap Priority Queue",
+    "category": "data-structures",
+    "difficulty": "medium",
+    "prompt": "Implement a MinHeap class with push(value), pop() (returns and removes minimum), peek() (returns minimum without removing), and a size property. Do not use heapq.",
+    "language": "python",
+    "tests": [
+      { "name": "push and peek", "setup": "h = MinHeap()", "run": "h.push(3); h.push(1); h.push(2); result = h.peek()", "assert": "result == 1" },
+      { "name": "pop order", "setup": "h = MinHeap()", "run": "h.push(3); h.push(1); h.push(2); r1 = h.pop(); r2 = h.pop(); result = (r1, r2)", "assert": "result == (1, 2)" },
+      { "name": "size", "setup": "h = MinHeap()", "run": "h.push(1); h.push(2); result = h.size", "assert": "result == 2" },
+      { "name": "pop empty", "setup": "h = MinHeap()", "run": "raised = False\ntry:\n    h.pop()\nexcept (IndexError, Exception):\n    raised = True\nresult = raised", "assert": "result == True" }
+    ],
+    "qualitative_checks": [
+      { "id": "manual-heap", "description": "Implements heap operations manually", "patterns": ["_sift|_bubble|_heapify|parent|left_child|right_child"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "trie",
+    "title": "Trie with Prefix Search",
+    "category": "data-structures",
+    "difficulty": "medium",
+    "prompt": "Implement a Trie class with insert(word), search(word) -> bool, starts_with(prefix) -> bool, and autocomplete(prefix) -> list of words with that prefix.",
+    "language": "python",
+    "tests": [
+      { "name": "insert and search", "setup": "t = Trie()", "run": "t.insert('hello'); result = t.search('hello')", "assert": "result == True" },
+      { "name": "search missing", "setup": "t = Trie()", "run": "t.insert('hello'); result = t.search('hell')", "assert": "result == False" },
+      { "name": "starts_with", "setup": "t = Trie()", "run": "t.insert('hello'); result = t.starts_with('hel')", "assert": "result == True" },
+      { "name": "autocomplete", "setup": "t = Trie()", "run": "t.insert('hello'); t.insert('help'); t.insert('world'); result = sorted(t.autocomplete('hel'))", "assert": "result == ['hello', 'help']" },
+      { "name": "empty autocomplete", "setup": "t = Trie()", "run": "t.insert('hello'); result = t.autocomplete('xyz')", "assert": "result == []" }
+    ],
+    "qualitative_checks": [
+      { "id": "node-class", "description": "Uses a TrieNode class", "patterns": ["class TrieNode|class Node"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  },
+  {
+    "id": "graph-bfs",
+    "title": "BFS Shortest Path",
+    "category": "data-structures",
+    "difficulty": "medium",
+    "prompt": "Write a function shortest_path(graph, start, end) that finds the shortest path in an unweighted graph. The graph is an adjacency list (dict of node -> list of neighbors). Return the path as a list of nodes, or an empty list if no path exists.",
+    "language": "python",
+    "tests": [
+      { "name": "direct path", "setup": "g = {'A': ['B'], 'B': ['A', 'C'], 'C': ['B']}", "run": "result = shortest_path(g, 'A', 'C')", "assert": "result == ['A', 'B', 'C']" },
+      { "name": "same node", "setup": "g = {'A': ['B'], 'B': ['A']}", "run": "result = shortest_path(g, 'A', 'A')", "assert": "result == ['A']" },
+      { "name": "no path", "setup": "g = {'A': ['B'], 'B': ['A'], 'C': []}", "run": "result = shortest_path(g, 'A', 'C')", "assert": "result == []" },
+      { "name": "shortest of multiple", "setup": "g = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A', 'D'], 'D': ['B', 'C']}", "run": "result = shortest_path(g, 'A', 'D')", "assert": "len(result) == 3" }
+    ],
+    "qualitative_checks": [
+      { "id": "bfs", "description": "Uses BFS (queue/deque)", "patterns": ["deque|queue|Queue"] },
+      { "id": "type-hints", "description": "Includes type hints", "patterns": ["def .+\\(.*:.*\\).*->"] }
+    ]
+  }
+]

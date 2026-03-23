@@ -1,8 +1,10 @@
 <p align="center">
-  <img src="assets/arena-logo.svg" alt="Arena Logo" width="280" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/arena-logo-dark.png" />
+    <source media="(prefers-color-scheme: light)" srcset="assets/arena-logo-light.png" />
+    <img src="assets/arena-logo-light.png" alt="Arena" width="320" />
+  </picture>
 </p>
-
-<h1 align="center">arena</h1>
 
 <p align="center">
   <strong>AI coding battles in your terminal. Two models. One challenge. The best code wins.</strong>

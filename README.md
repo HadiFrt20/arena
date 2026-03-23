@@ -27,10 +27,8 @@
 
 ---
 
-<!-- GIF PLACEHOLDER: Record a battle with `asciinema rec` or `vhs` -->
-<!-- Replace with: ![Arena Battle Demo](assets/demo.gif) -->
 <p align="center">
-  <code>[ demo.gif — record with: asciinema rec / vhs / terminalizer ]</code>
+  <img src="assets/demo.gif" alt="Arena Demo" width="800" />
 </p>
 
 ---

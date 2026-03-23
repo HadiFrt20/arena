@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/arena-logo.png" alt="Arena Logo" width="120" />
+  <img src="assets/arena-logo.svg" alt="Arena Logo" width="280" />
 </p>
 
 <h1 align="center">arena</h1>

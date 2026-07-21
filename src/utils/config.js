@@ -16,7 +16,8 @@ const DEFAULT_CONFIG = {
     anthropic: { api_key_env: 'ANTHROPIC_API_KEY' },
     openai: { api_key_env: 'OPENAI_API_KEY' },
     google: { api_key_env: 'GOOGLE_API_KEY' },
-    ollama: { base_url: 'http://localhost:11434' }
+    ollama: { base_url: 'http://localhost:11434' },
+    'openai-compatible': { base_url: 'http://localhost:1234/v1', api_key_env: 'OPENAI_COMPATIBLE_API_KEY' }
   },
   defaults: {
     left: 'claude',
@@ -32,7 +33,8 @@ const DEFAULT_CONFIG = {
     'llama3': 'ollama:llama3.3',
     'deepseek': 'ollama:deepseek-coder-v2:latest',
     'qwen': 'ollama:qwen2.5-coder:1.5b',
-    'smollm': 'ollama:smollm2:135m'
+    'smollm': 'ollama:smollm2:135m',
+    'lmstudio': 'openai-compatible:local-model'
   },
   global_leaderboard: {
     enabled: false,

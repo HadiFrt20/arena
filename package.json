@@ -13,7 +13,8 @@
     "test:integration": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --testPathPattern=integration --reporters=./tests/reporter.js",
     "test:uat": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --testPathPattern=uat --reporters=./tests/reporter.js",
     "test:verbose": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --verbose",
-    "test:coverage": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --coverage --verbose"
+    "test:coverage": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --coverage --verbose",
+    "gen:providers": "node scripts/gen-providers-table.js"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -22,6 +23,10 @@
     "testEnvironment": "node",
     "testTimeout": 30000,
     "transform": {},
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/.dagny/"
+    ],
     "coverageThreshold": {
       "global": {
         "branches": 80,

@@ -1,20 +1,24 @@
 import { BaseProvider } from './provider.js';
-import { getApiKey } from '../utils/config.js';
+import { register } from './registry.js';
 import { readStreamLines, assertResponseOk } from '../utils/sse.js';
 
 export class AnthropicProvider extends BaseProvider {
   constructor(model) {
     super('anthropic');
     this.model = model;
-    this.apiKey = getApiKey('anthropic');
   }
 
   async *stream(prompt) {
+    // Lazy config import — see the note in openai.js. Keeps providers out of
+    // config's static import graph so the registry bootstrap has no cycle.
+    const { getApiKey } = await import('../utils/config.js');
+    const apiKey = getApiKey('anthropic');
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': this.apiKey,
+        'x-api-key': apiKey,
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
@@ -41,3 +45,15 @@ export class AnthropicProvider extends BaseProvider {
     }
   }
 }
+
+register({
+  name: 'anthropic',
+  Provider: AnthropicProvider,
+  config: { apiKeyEnv: 'ANTHROPIC_API_KEY' },
+  capabilities: {
+    auth: 'header',
+    authHeader: 'x-api-key',
+    endpoint: 'https://api.anthropic.com/v1/messages',
+    stream: { style: 'sse', terminator: '[DONE]' }
+  }
+});

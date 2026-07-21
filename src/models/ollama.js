@@ -1,13 +1,19 @@
 import { BaseProvider } from './provider.js';
-import { loadConfig } from '../utils/config.js';
+import { register, lookup } from './registry.js';
 import { readStreamLines, assertResponseOk } from '../utils/sse.js';
+
+const DEFAULT_BASE_URL = 'http://localhost:11434';
 
 export class OllamaProvider extends BaseProvider {
   constructor(model) {
     super('ollama');
     this.model = model;
-    const config = loadConfig();
-    this.baseUrl = config.providers?.ollama?.base_url || 'http://localhost:11434';
+    // Base URL comes from this provider's own registry declaration (a
+    // synchronous read, so no config import is needed in the constructor and no
+    // circular import is created). A user override persisted in ~/.arena/config
+    // is layered on by loadConfig(); createProvider() passes an already-resolved
+    // model, and the default matches the derived config value.
+    this.baseUrl = lookup('ollama')?.config?.baseUrlDefault || DEFAULT_BASE_URL;
   }
 
   async *stream(prompt) {
@@ -31,3 +37,14 @@ export class OllamaProvider extends BaseProvider {
     }
   }
 }
+
+register({
+  name: 'ollama',
+  Provider: OllamaProvider,
+  config: { baseUrlDefault: DEFAULT_BASE_URL },
+  capabilities: {
+    auth: 'none',
+    endpoint: '{base_url}/api/generate',
+    stream: { style: 'ndjson', terminator: null }
+  }
+});

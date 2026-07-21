@@ -1,15 +1,14 @@
-import { AnthropicProvider } from './anthropic.js';
-import { OpenAIProvider } from './openai.js';
-import { GoogleProvider } from './google.js';
-import { OllamaProvider } from './ollama.js';
+import { lookup, instantiate } from './registry.js';
+
+// Ensure providers have self-registered before any createProvider() call.
+// Dynamic top-level-await import of the bootstrap (same pattern as config.js):
+// providers import config lazily, so there is no import cycle, and the await
+// guarantees the registry is populated before this module finishes evaluating.
+await import('./bootstrap.js');
 
 export function createProvider(resolved) {
   const { provider, model } = resolved;
-  switch (provider) {
-    case 'anthropic': return Object.assign(new AnthropicProvider(model), { alias: resolved.alias });
-    case 'openai': return Object.assign(new OpenAIProvider(model), { alias: resolved.alias });
-    case 'google': return Object.assign(new GoogleProvider(model), { alias: resolved.alias });
-    case 'ollama': return Object.assign(new OllamaProvider(model), { alias: resolved.alias });
-    default: throw new Error(`Unknown provider: ${provider}`);
-  }
+  const declaration = lookup(provider);
+  if (!declaration) throw new Error(`Unknown provider: ${provider}`);
+  return Object.assign(instantiate(declaration, model), { alias: resolved.alias });
 }

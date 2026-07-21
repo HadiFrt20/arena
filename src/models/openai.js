@@ -1,20 +1,26 @@
 import { BaseProvider } from './provider.js';
-import { getApiKey } from '../utils/config.js';
+import { register } from './registry.js';
 import { readStreamLines, assertResponseOk } from '../utils/sse.js';
 
 export class OpenAIProvider extends BaseProvider {
   constructor(model) {
     super('openai');
     this.model = model;
-    this.apiKey = getApiKey('openai');
   }
 
   async *stream(prompt) {
+    // Resolve the API key lazily (dynamic import) rather than importing config.js
+    // statically. This keeps provider modules out of config's static import graph,
+    // so config.js can trigger the provider dir-scan without a circular import;
+    // tests that mock config.js still intercept this dynamic import.
+    const { getApiKey } = await import('../utils/config.js');
+    const apiKey = getApiKey('openai');
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.apiKey}`
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
         model: this.model,
@@ -38,3 +44,14 @@ export class OpenAIProvider extends BaseProvider {
     }
   }
 }
+
+register({
+  name: 'openai',
+  Provider: OpenAIProvider,
+  config: { apiKeyEnv: 'OPENAI_API_KEY' },
+  capabilities: {
+    auth: 'bearer',
+    endpoint: 'https://api.openai.com/v1/chat/completions',
+    stream: { style: 'sse', terminator: '[DONE]' }
+  }
+});

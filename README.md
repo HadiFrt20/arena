@@ -350,6 +350,43 @@ Any Ollama model works with the `ollama:model-name` syntax:
 arena battle fizzbuzz --left ollama:codestral --right ollama:qwen2.5-coder:32b
 ```
 
+### Generic OpenAI-compatible endpoints
+
+The `openai-compatible` provider talks to any server that speaks the OpenAI
+`/chat/completions` streaming API — LM Studio, vLLM, OpenRouter, Together, LiteLLM, etc.
+
+| Alias | Model | Provider |
+|-------|-------|----------|
+| `lmstudio` | local-model | OpenAI-compatible |
+
+Configure the endpoint under `providers` in `~/.arena/config.json`:
+
+```json
+{
+  "providers": {
+    "openai-compatible": {
+      "base_url": "http://localhost:1234/v1",
+      "api_key_env": "OPENAI_COMPATIBLE_API_KEY"
+    }
+  }
+}
+```
+
+- **`base_url`** — the API root; the provider POSTs to `${base_url}/chat/completions`.
+- **`api_key_env`** — name of the env var holding the API key. It is sent as
+  `Authorization: Bearer <key>`. Keyless local endpoints work too: if the env var
+  is unset, no `Authorization` header is sent.
+
+Use the `openai-compatible:model` specifier (or the `lmstudio` alias) to pick a model:
+
+```bash
+# Local LM Studio / vLLM (keyless)
+arena battle fizzbuzz --left openai-compatible:my-model --right claude
+
+# OpenRouter (set OPENAI_COMPATIBLE_API_KEY and base_url https://openrouter.ai/api/v1)
+arena battle fizzbuzz --left openai-compatible:meta-llama/llama-3.1-70b-instruct --right gpt4o
+```
+
 ## ELO Rating System
 
 Arena maintains a local ELO rating for every model you test:

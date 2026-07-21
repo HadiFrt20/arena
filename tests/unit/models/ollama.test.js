@@ -1,8 +1,12 @@
 import { jest } from '@jest/globals';
 
+// Mutable so individual tests can simulate a user's persisted ~/.arena/config
+// override. Defaults to the localhost value the derived config produces.
+let mockOllamaConfig = { base_url: 'http://localhost:11434' };
+
 jest.unstable_mockModule('../../../src/utils/config.js', () => ({
   loadConfig: () => ({
-    providers: { ollama: { base_url: 'http://localhost:11434' } }
+    providers: { ollama: { ...mockOllamaConfig } }
   }),
   getApiKey: () => null,
   ensureArenaDir: () => {},
@@ -28,12 +32,37 @@ function createNDJSONResponse(objects) {
 describe('OllamaProvider', () => {
   let originalFetch;
 
-  beforeEach(() => { originalFetch = global.fetch; });
-  afterEach(() => { global.fetch = originalFetch; });
+  beforeEach(() => {
+    originalFetch = global.fetch;
+    mockOllamaConfig = { base_url: 'http://localhost:11434' };
+  });
+  afterEach(() => {
+    global.fetch = originalFetch;
+    mockOllamaConfig = { base_url: 'http://localhost:11434' };
+  });
 
   test('base_url defaults to localhost:11434', () => {
     const provider = new OllamaProvider('llama3.3');
     expect(provider.baseUrl).toBe('http://localhost:11434');
+  });
+
+  test('user-config base_url override beats the registry default', async () => {
+    // Regression: a persisted ~/.arena/config.json override (e.g. a remote
+    // endpoint) must win over the registry declaration's baseUrlDefault.
+    mockOllamaConfig = { base_url: 'http://my-remote-ollama:9999' };
+
+    global.fetch = jest.fn().mockResolvedValue(createNDJSONResponse([
+      { response: 'hi' },
+      { response: '', done: true }
+    ]));
+
+    const provider = new OllamaProvider('llama3.3');
+    for await (const _ of provider.stream('test prompt')) {}
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://my-remote-ollama:9999/api/generate',
+      expect.objectContaining({ method: 'POST' })
+    );
   });
 
   test('request goes to /api/generate with correct body', async () => {

@@ -64,6 +64,11 @@ register({
   capabilities: {
     auth: 'bearer',
     endpoint: 'https://api.cohere.com/v2/chat',
-    stream: { style: 'sse', terminator: null }
+    // Cohere v2 /chat has NO `[DONE]` sentinel: the stream is terminated by a
+    // `message-end` event (see stream() above). Declaring it here — rather than
+    // a bare null — lets `arena providers`, the docs generator, and the registry
+    // integration test distinguish message-end termination from a plain
+    // stream-close (huggingface/ollama), all data-driven off this declaration.
+    stream: { style: 'sse', terminator: 'message-end' }
   }
 });

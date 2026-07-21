@@ -11,6 +11,7 @@ import { tournamentCommand } from '../src/commands/tournament.js';
 import { generateCommand } from '../src/commands/generate.js';
 import { installCommand } from '../src/commands/install.js';
 import { publishCommand } from '../src/commands/publish.js';
+import { providersCommand } from '../src/commands/providers.js';
 
 program
   .name('arena')
@@ -89,5 +90,10 @@ program
   .command('config')
   .description('Configure API keys and defaults')
   .action(configCommand);
+
+program
+  .command('providers')
+  .description('List all registered model providers and their capabilities')
+  .action(providersCommand);
 
 program.parse();

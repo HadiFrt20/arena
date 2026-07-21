@@ -350,6 +350,31 @@ Any Ollama model works with the `ollama:model-name` syntax:
 arena battle fizzbuzz --left ollama:codestral --right ollama:qwen2.5-coder:32b
 ```
 
+### Providers & capabilities
+
+Every model runs through a self-registered provider. The table below is
+**generated from the live registry** (`npm run gen:providers`) — auth style,
+endpoint, stream framing/termination, and the api-key env var each come from the
+provider's own declaration. Run `arena providers` to see the same at runtime.
+
+<!-- PROVIDERS:START -->
+| Provider | Auth | Endpoint | Stream (style / termination) | API-key env / base URL |
+|----------|------|----------|------------------------------|------------------------|
+| `anthropic` | header: x-api-key | `https://api.anthropic.com/v1/messages` | sse ([DONE] sentinel) | `ANTHROPIC_API_KEY` |
+| `azure` | header: api-key | `https://{resource}.openai.azure.com/openai/deployments/{deployment}/chat/completions?api-version={apiVersion}` | sse ([DONE] sentinel) | `AZURE_OPENAI_API_KEY` |
+| `cohere` | Bearer token | `https://api.cohere.com/v2/chat` | sse (message-end event) | `CO_API_KEY` |
+| `google` | query param: key | `https://generativelanguage.googleapis.com/v1beta/models/{model}:streamGenerateContent?alt=sse` | sse (stream-close) | `GOOGLE_API_KEY` |
+| `huggingface` | Bearer token | `https://api-inference.huggingface.co/models/{model}` | sse (stream-close) | `HF_API_TOKEN` |
+| `mistral` | Bearer token | `https://api.mistral.ai/v1/chat/completions` | sse ([DONE] sentinel) | `MISTRAL_API_KEY` |
+| `ollama` | none | `{base_url}/api/generate` | ndjson (stream-close) | `base_url default: http://localhost:11434` |
+| `openai` | Bearer token | `https://api.openai.com/v1/chat/completions` | sse ([DONE] sentinel) | `OPENAI_API_KEY` |
+
+> _8 providers — generated from the live registry by `npm run gen:providers`. Do not edit by hand._
+<!-- PROVIDERS:END -->
+
+See [docs/PROVIDERS.md](docs/PROVIDERS.md) for how to read this table and how to
+add a provider (zero edits to `factory.js` / `config.js`).
+
 ## ELO Rating System
 
 Arena maintains a local ELO rating for every model you test:
